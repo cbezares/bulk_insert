@@ -149,6 +149,28 @@ Book.bulk_insert(*destination_columns, ignore: true) do |worker|
 end
 ```
 
+### Select other table
+
+You can specify on which table the inserts will be made. This can be
+useful for partitioned tables, duplicate tables or clone data into
+another similar table.
+
+If the option :table_name is not given, the inserts will be made in
+the default table.
+
+```ruby
+destination_columns = [:title, :author]
+
+# Select table to make inserts
+Book.bulk_insert(*destination_columns, table_name: 'partitioned_schema.table_name') do |worker|
+  worker.add ['Golden Prey', 'John Sandford']
+  worker.add ['Milk and Honey ', 'Rupi Kaur']
+  # ...
+end
+#-> "INSERT INTO partitioned_schema.table_name (title, author) VALUES
+#->   ('Golden Prey', 'John Sandford'),
+#->   ('Milk and Honey ', 'Rupi Kaur'); "
+```
 
 ## License
 
